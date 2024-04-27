@@ -1,0 +1,99 @@
+1) --------------------------------------------
+
+select sum(sales_items.UnitPrice * sales_items.Quantity)
+from sales join sales_items
+on sales.SalesId = sales_items.SalesId
+where sales.ShipCountry = "USA" and sales.SalesDate > date('2011-12-31') and sales.SalesDate < date('2012-04-01');
+
+select sum(sales_items.UnitPrice * sales_items.Quantity)
+from sales_items
+where (sales_items.SalesId in (
+    select sales.SalesId from sales
+    where sales.shipCountry = "USA" and sales.SalesDate > date('2011-12-31') and sales.SalesDate < date('2012-04-01') and sales.SalesId in (
+        select sales_items.SalesId from sales_items
+        where sales.SalesId = sales_items.SalesId
+        )
+    )
+)
+
+2) ---------------------------------------------
+
+select FirstName
+from customers 
+where customers.FirstName not in (
+    select employees.FirstName
+    from customers join employees
+    where customers.FirstName = employees.FirstName
+)
+group by customers.FirstName
+
+select customers.FirstName
+from customers
+except 
+select employees.FirstName
+from employees
+
+select customers.FirstName
+from customers
+where (customers.FirstName not in (
+    select employees.FirstName
+    from employees)
+    )
+group by customers.FirstName
+
+3) ------------------------------------------------
+
+Результат будет разный.
+В первом случае получим только строки, удовлетворяющие where.
+Во втором случае получаем все строки из t1.
+Т.е во втором случае будем получать больше строк
+
+4) ------------------------------------------------
+
+select albums.Title, count(*) as CountOfTracks
+from albums left join tracks
+    on albums.AlbumId = tracks.AlbumId
+group by albums.Title
+
+select Title, (select count(*)
+               from tracks
+               where tracks.AlbumId = albums.AlbumId
+               group by tracks.AlbumId) as CountOfTracks
+from albums
+group by albums.Title
+
+5) -------------------------------------------------
+
+select customers.LastName, customers.FirstName
+from customers inner join sales
+    on sales.CustomerId = customers.CustomerId
+where customers.Country = "Germany" and sales.ShipCity = "Berlin" and
+ date(sales.SalesDate) > date('2009-01-01') and date(sales.SalesDate) < date('2009-12-31')
+
+6) --------------------------------------------------
+
+select LastName
+from customers, sales, sales_items
+where customers.CustomerId = sales.CustomerId and sales.SalesId = sales_items.SalesId
+group by customers.CustomerId
+having sum(sales_items.Quantity) > 30
+
+select FirstName, LastName 
+from (select FirstName, LastName,
+     (select count(*) FROM sales_items INNER JOIN sales ON sales.SalesId = sales_items.SalesId AND sales.CustomerId = customers.CustomerId) 
+     as count FROM customers WHERE count > 30)
+
+7) --------------------------------------------------
+
+select genres.Name, AVG(tracks.UnitPrice) as average_price
+from genres cross join tracks
+    on genres.GenreId = tracks.GenreId
+group by genres.GenreId
+
+8) ---------------------------------------------------
+
+select genres.Name
+from genres cross join tracks
+    on genres.GenreId = tracks.GenreId
+group by genres.GenreId 
+having AVG(tracks.UnitPrice) > 1
