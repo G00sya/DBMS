@@ -1,6 +1,7 @@
- 
 1)
-
+select user_id, COUNT(distinct time) as number_of_visits_to_bet
+from LOG
+group by user_id
 2)
 select
     user_id,
@@ -33,3 +34,4 @@ from LOG
 inner join USERS on LOG.user_id = USERS.user_id
 group by USERS.geo
 order by avg_bet desc
+6)
