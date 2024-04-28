@@ -1,13 +1,13 @@
 import csv
 import codecs
 
-# Укажите путь к вашему CSV файлу
+# Путь до моего csv-шника
 file_path = 'users(1).csv'
 
-# Укажите нужную кодировку
+# Указываю кодировку
 encoding = 'koi8_r'
 
-# Открываем файл с указанием кодировки
+# Открываю файл для чтения
 with codecs.open(file_path, 'r', encoding) as file:
     csv_reader = csv.reader(file)
     for row in csv_reader:
