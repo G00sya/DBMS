@@ -1,37 +1,45 @@
 1)
-select user_id, COUNT(distinct time) as number_of_visits_to_bet
+select user_id, count(distinct time) as number_of_visits_to_bet
 from LOG
 group by user_id
+
+
 2)
 select
     user_id,
-    AVG(100.0 * (win - bet) / bet) AS avg_win_percentage
+    avg(100.0 * (win - bet) / bet) as avg_win_percentage
 from LOG
 group by user_id
+
 
 3)
 select
     user_id,
-    SUM(win - bet) as balance
+    sum(win - bet) as balance
 from LOG
 group by user_id
+
 
 4)
 select
     USERS.geo as city,
-    SUM(LOG.win - LOG.bet) as total_profit,
-    SUM(LOG.bet) AS total_bet,
-    SUM(LOG.win - LOG.bet) / SUM(LOG.bet) as profitability_ratio
+    sum(LOG.win - LOG.bet) as total_profit,
+    sum(LOG.bet) as total_bet,
+    sum(LOG.win - LOG.bet) / sum(LOG.bet) as profitability_ratio
 from LOG
 inner join USERS on LOG.user_id = USERS.user_id
 group by USERS.geo
 order by profitability_ratio desc
+
+
 5)
 select
     USERS.geo as city,
-    AVG(LOG.bet) as avg_bet
+    avg(LOG.bet) as avg_bet
 from LOG
 inner join USERS on LOG.user_id = USERS.user_id
 group by USERS.geo
 order by avg_bet desc
+
+
 6)
