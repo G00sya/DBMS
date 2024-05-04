@@ -26,8 +26,13 @@ filtered_arr = []
 with codecs.open(file_path, 'r', encoding) as file:
     csv_reader = csv.reader(file)
     for row in csv_reader:
+        flag = True
         filtered_data = extract_values(row)
-        filtered_arr.append(filtered_data)
+        for elem in filtered_data.values():
+            if elem is None:
+                flag = False
+        if flag:
+            filtered_arr.append(filtered_data)
 
 # Записываем данные в другой csv-шник
 with open(output_file_path, mode='w', newline='') as file:
