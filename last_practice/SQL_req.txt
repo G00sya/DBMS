@@ -43,3 +43,18 @@ order by avg_bet desc
 
 
 6)
+select avg(avg_value.average_time_first_bet) as Average_time FROM(
+	with first_visit as (
+		select user_id, min(time) as first_visit_time
+		from LOG
+		group by user_id
+	),
+	first_bet as (
+		select user_id, min(time) as first_bet_time
+		from LOG
+		where bet != ""
+		group by user_id
+	)
+	select avg(julianday(first_bet_time) - julianday(first_visit_time)) as average_time_first_bet
+	from first_bet
+	join first_visit on first_visit.user_id = first_bet.user_id) as avg_value
